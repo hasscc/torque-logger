@@ -6,7 +6,6 @@ import logging
 from homeassistant.components.device_tracker.config_entry import TrackerEntity
 from homeassistant.components.device_tracker.const import (
     DOMAIN,
-    SOURCE_TYPE_GPS,
 )
 from homeassistant.const import (
     ATTR_LATITUDE,
@@ -102,11 +101,6 @@ class TorqueDeviceTracker(TorqueEntity, TrackerEntity, RestoreEntity):
             return float(self._restored_state[ATTR_LONGITUDE])
         else:
             return None
-
-    @property
-    def source_type(self):
-        """Return the source type, eg gps or router, of the device."""
-        return SOURCE_TYPE_GPS
 
     async def async_added_to_hass(self):
         """Call when entity about to be added to Home Assistant."""
