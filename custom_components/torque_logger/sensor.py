@@ -3,7 +3,7 @@
 import logging
 import re
 from typing import TYPE_CHECKING
-from homeassistant.components.sensor import RestoreSensor
+from homeassistant.components.sensor import RestoreSensor, SensorStateClass
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -21,6 +21,17 @@ if TYPE_CHECKING:
 
 
 _LOGGER: logging.Logger = logging.getLogger(__package__)
+
+STATE_CLASSES = {
+    "odo": SensorStateClass.TOTAL,
+    "trip": SensorStateClass.MEASUREMENT,
+    "mil_off": SensorStateClass.MEASUREMENT,
+    "speed": SensorStateClass.MEASUREMENT,
+    "trip_speed": SensorStateClass.MEASUREMENT,
+    "fuel": SensorStateClass.MEASUREMENT,
+    "intake": SensorStateClass.MEASUREMENT,
+    "batlvl": SensorStateClass.MEASUREMENT,
+}
 
 
 async def async_setup_entry(
@@ -76,6 +87,9 @@ class TorqueSensor(TorqueEntity, RestoreSensor):
             sensor_name = self.coordinator.data["meta"].get(self.sensor_key)["name"]
             self._attr_name = sensor_name
             self._set_icon()
+
+        if state_class := STATE_CLASSES.get(sensor_key):
+            self._attr_state_class = state_class
 
         self.entity_id = f"{SENSOR}.{self._car_id}_{sensor_key}"
         self._restored_state = None
